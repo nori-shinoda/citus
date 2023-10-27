@@ -175,6 +175,23 @@ DEPS = {
     ),
     "grant_on_schema_propagation": TestDeps("minimal_schedule"),
     "propagate_extension_commands": TestDeps("minimal_schedule"),
+    "multi_mx_function_table_reference": TestDeps(
+        None,
+        [
+            "multi_cluster_management",
+            "remove_coordinator_from_metadata",
+        ],
+        # because it queries node group id and it changes as we add / remove nodes
+        repeatable=False,
+    ),
+    "multi_mx_add_coordinator": TestDeps(
+        None,
+        [
+            "multi_cluster_management",
+            "remove_coordinator_from_metadata",
+            "multi_mx_function_table_reference",
+        ],
+    ),
 }
 
 

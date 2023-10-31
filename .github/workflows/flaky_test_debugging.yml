@@ -1,7 +1,7 @@
 name: Flaky test debugging
 run-name: Flaky test debugging - ${{ inputs.flaky_test }} (${{ inputs.flaky_test_runs_per_job }}x${{ inputs.flaky_test_parallel_jobs }})
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.flaky_test }}
   cancel-in-progress: true
 on:
   workflow_dispatch:
@@ -38,7 +38,6 @@ jobs:
       with:
         name: build-${{ env.PG_MAJOR }}
         path: |-
-          ./build-${{ env.PG_MAJOR }}/*
           ./install-${{ env.PG_MAJOR }}.tar
   prepare_parallelization_matrix:
     name: Prepare parallelization matrix
@@ -72,6 +71,7 @@ jobs:
     - name: Run minimal tests
       run: |-
           gosu circleci src/test/regress/citus_tests/run_test.py ${{ env.test }} --repeat ${{ env.runs }} --use-base-schedule --use-whole-schedule-line
+      timeout-minutes: 20
       shell: bash
     - uses: "./.github/actions/save_logs_and_results"
       if: always()
